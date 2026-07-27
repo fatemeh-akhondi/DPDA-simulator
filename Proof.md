@@ -10,6 +10,7 @@ The question we must answer algorithmically is:
 
 > **Does the DPDA halt on a given input, or does it loop forever on ε-transitions?**
 
+---
 
 ## 2. The Loop Detection Rule
 
@@ -27,6 +28,7 @@ Each time an ε-transition is about to be taken from configuration $c$ with curr
 
 When a **real input symbol** is consumed, `input_index` increments, so all configuration keys at the new index are fresh — the loop detection state resets naturally across input reads without any explicit clearing.
 
+---
 
 ## 3. Correctness
 
