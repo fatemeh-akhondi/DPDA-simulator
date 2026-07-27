@@ -10,25 +10,23 @@ The question we must answer algorithmically is:
 
 > **Does the DPDA halt on a given input, or does it loop forever on ε-transitions?**
 
----
 
 ## 2. The Loop Detection Rule
 
 The simulator tracks, for each **configuration key** $c = (\text{state},\ \text{stack top},\ \text{input index})$, two values:
 
-- $\text{min\\_ever}(c)$: the minimum stack length observed across all visits to $c$ so far.
-- $\text{last\\_len}(c)$: the stack length at the most recent visit to $c$.
+- $\text{min-ever}(c)$: the minimum stack length observed across all visits to $c$ so far.
+- $\text{last-len}(c)$: the stack length at the most recent visit to $c$.
 
 Each time an ε-transition is about to be taken from configuration $c$ with current stack length $\ell$:
 
 1. If $c$ has not been visited before: record $(\ell,\ \ell)$ and continue.
 2. If $c$ has been visited before:
-   - If $\text{min\\_ever}(c) \geq \text{last\\_len}(c)$: **declare a loop and reject**.
-   - Otherwise: update $\text{min\\_ever}(c) \leftarrow \min(\text{min\\_ever}(c),\ \ell)$ and $\text{last\\_len}(c) \leftarrow \ell$, and continue.
+   - If $\text{min-ever}(c) \geq \text{last-len}(c)$: **declare a loop and reject**.
+   - Otherwise: update $\text{min-ever}(c) \leftarrow \min(\text{min-ever}(c),\ \ell)$ and $\text{last-len}(c) \leftarrow \ell$, and continue.
 
 When a **real input symbol** is consumed, `input_index` increments, so all configuration keys at the new index are fresh — the loop detection state resets naturally across input reads without any explicit clearing.
 
----
 
 ## 3. Correctness
 
@@ -50,14 +48,14 @@ Suppose $M$ enters an infinite chain of ε-transitions with the input index fixe
 
 Since the set of all config keys has size at most $|Q| \times |\Gamma|$, which is finite, by the **Pigeonhole Principle** at least one key must be good. Since bad keys each appear only finitely many times, there is some point in the execution after which **every** config key visited is good. Discard everything before that point; from here on the sequence visits only good keys.
 
-Among all configurations in this suffix, let $\langle q^* , \gamma^* \rangle$ be the one with the **shortest stack** (break ties arbitrarily). Let $A^* = \text{top}(\gamma^*)$ and $\ell^* = |\gamma^*|$. Its config key $c^* = (q^* , A^* , i)$ is good, so it appears infinitely often. Let visit $j$ be the visit to $c^*$ where the stack length is $\ell^*$, and let visit $j+1$ be any subsequent visit to $c^*$.
+Among all configurations in this suffix, let $\langle q^{*}, \gamma^{*} \rangle$ be the one with the **shortest stack** (break ties arbitrarily). Let $A^{*} = \text{top}(\gamma^{*})$ and $\ell^{*} = |\gamma^{*}|$. Its config key $c^{*} = (q^{*}, A^{*}, i)$ is good, so it appears infinitely often. Let visit $j$ be the visit to $c^{*}$ where the stack length is $\ell^{*}$, and let visit $j+1$ be any subsequent visit to $c^{*}$.
 
-**Claim: the stack never goes below $\ell^*$ between visits $j$ and $j+1$.**
+**Claim: the stack never goes below $\ell^{*}$ between visits $j$ and $j+1$.**
 
-Suppose for contradiction the stack went below length $\ell^*$ at some point $t$ strictly between visits $j$ and $j+1$. Let $c_t = (q_t, A_t, i)$ be the config key at time $t$. Since $t$ is in the suffix where only good keys are visited, $c_t$ is good — meaning it recurs infinitely often, so it is a configuration with a stack shorter than $\ell^*$ that appears infinitely often. This contradicts the choice of $\langle q^* , \gamma^* \rangle$ as the configuration with the **shortest stack** in the suffix. ↯
+Suppose for contradiction the stack went below length $\ell^{*}$ at some point $t$ strictly between visits $j$ and $j+1$. Let $c_t = (q_t, A_t, i)$ be the config key at time $t$. Since $t$ is in the suffix where only good keys are visited, $c_t$ is good — meaning it recurs infinitely often, so it is a configuration with a stack shorter than $\ell^{*}$ that appears infinitely often. This contradicts the choice of $\langle q^{*}, \gamma^{*} \rangle$ as the configuration with the **shortest stack** in the suffix. ↯
 
-Therefore the stack never falls below $\ell^*$ between visits $j$ and $j+1$, so:
+Therefore the stack never falls below $\ell^{*}$ between visits $j$ and $j+1$, so:
 
-$$\text{min\\_ever}(c^*) \geq \ell^* = \text{last\\_len}(c^*)$$
+$$\text{min-ever}(c^{*}) \geq \ell^{*} = \text{last-len}(c^{*})$$
 
 and the algorithm **declares a loop** at visit $j+1$. $\blacksquare$
